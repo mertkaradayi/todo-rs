@@ -1,8 +1,10 @@
 use diesel::prelude::*;
+use serde::{Deserialize, Serialize};
 
 #[derive(Queryable, Selectable)]
 #[diesel(table_name = crate::schema::todos)]
 #[diesel(check_for_backend(diesel::sqlite::Sqlite))]
+#[derive(Serialize, Deserialize)]
 pub struct Todo {
     pub id: i32,
     pub description: String,
