@@ -1,4 +1,4 @@
-use axum::{http::StatusCode, Json};
+use axum::{extract::Path, http::StatusCode, Json};
 use serde::Serialize;
 
 #[derive(Serialize)]
@@ -21,7 +21,7 @@ pub async fn get_todos() -> (StatusCode, Json<Vec<Todo>>) {
     (StatusCode::OK, Json(todos))
 }
 
-pub async fn get_todo(id: u64) -> (StatusCode, Json<Todo>) {
+pub async fn get_todo(Path(id): Path<u64>) -> (StatusCode, Json<Todo>) {
     let todos = vec![
         Todo {
             id: 1337,
