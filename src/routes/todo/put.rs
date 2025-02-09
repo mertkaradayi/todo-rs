@@ -17,12 +17,10 @@ pub async fn update_todo(
 ) -> Result<Json<Todo>, AppError> {
     use crate::schema::todos::dsl::{id as todo_id, todos};
 
-    let mut conn = db_pool
-        .get()
-        .map_err(|_| AppError {
-            status: StatusCode::INTERNAL_SERVER_ERROR,
-            message: "Failed to get connection from pool".to_string(),
-        })?;
+    let mut conn = db_pool.get().map_err(|_| AppError {
+        status: StatusCode::INTERNAL_SERVER_ERROR,
+        message: "Failed to get connection from pool".to_string(),
+    })?;
 
     let updated_todo = diesel::update(todos.filter(todo_id.eq(id)))
         .set(&update_todo)

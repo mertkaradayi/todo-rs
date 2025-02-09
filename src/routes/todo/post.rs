@@ -12,12 +12,10 @@ pub async fn create_todo(
 ) -> Result<Json<Todo>, AppError> {
     use crate::schema::todos::dsl::*;
 
-    let mut conn = db_pool
-        .get()
-        .map_err(|_| AppError {
-            status: StatusCode::INTERNAL_SERVER_ERROR,
-            message: "Failed to get connection from pool".to_string(),
-        })?;
+    let mut conn = db_pool.get().map_err(|_| AppError {
+        status: StatusCode::INTERNAL_SERVER_ERROR,
+        message: "Failed to get connection from pool".to_string(),
+    })?;
 
     let inserted_todo = diesel::insert_into(todos)
         .values(description.eq(new_todo.description))
