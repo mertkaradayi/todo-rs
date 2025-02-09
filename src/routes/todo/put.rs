@@ -1,12 +1,7 @@
 use crate::domain::{PutTodo, Todo};
-use crate::errors::AppError;
-use crate::DbPool;
+use crate::utils::{AppError, DbPool, Json, Path};
 use anyhow::Result;
-use axum::{
-    extract::{Path, State},
-    http::StatusCode,
-    Json,
-};
+use axum::{extract::State, http::StatusCode};
 use diesel::prelude::*;
 
 #[axum::debug_handler]

@@ -1,7 +1,9 @@
-use crate::errors::AppError;
-use crate::DbPool;
+use crate::utils::AppError;
+use crate::utils::DbPool;
+use crate::utils::Json;
+use crate::utils::Path;
 use anyhow::Result;
-use axum::{extract::Path, extract::State, http::StatusCode, Json};
+use axum::{extract::State, http::StatusCode};
 
 use crate::domain::Todo;
 use diesel::prelude::*;
@@ -9,12 +11,10 @@ use diesel::prelude::*;
 pub async fn get_todos(State(db_pool): State<DbPool>) -> Result<Json<Vec<Todo>>, AppError> {
     use crate::schema::todos::dsl::*;
 
-    let mut conn = db_pool
-        .get()
-        .map_err(|_| AppError {
-            status: StatusCode::INTERNAL_SERVER_ERROR,
-            message: "Failed to get connection from pool".to_string(),
-        })?;
+    let mut conn = db_pool.get().map_err(|_| AppError {
+        status: StatusCode::INTERNAL_SERVER_ERROR,
+        message: "Failed to get connection from pool".to_string(),
+    })?;
 
     let result_todos: Vec<_> = todos
         .limit(10)
@@ -31,12 +31,10 @@ pub async fn get_todo(
 ) -> Result<Json<Todo>, AppError> {
     use crate::schema::todos::dsl;
 
-    let mut conn = db_pool
-        .get()
-        .map_err(|_| AppError {
-            status: StatusCode::INTERNAL_SERVER_ERROR,
-            message: "Failed to get connection from pool".to_string(),
-        })?;
+    let mut conn = db_pool.get().map_err(|_| AppError {
+        status: StatusCode::INTERNAL_SERVER_ERROR,
+        message: "Failed to get connection from pool".to_string(),
+    })?;
     dsl::todos
         .filter(dsl::id.eq(id))
         .select(Todo::as_select())

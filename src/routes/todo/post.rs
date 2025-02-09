@@ -1,8 +1,7 @@
 use crate::domain::{PostTodo, Todo};
-use crate::errors::AppError;
-use crate::DbPool;
+use crate::utils::{AppError, DbPool, Json};
 use anyhow::Result;
-use axum::{extract::State, http::StatusCode, Json};
+use axum::{extract::State, http::StatusCode};
 
 use diesel::prelude::*;
 
