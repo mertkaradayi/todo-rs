@@ -1,3 +1,5 @@
+use crate::errors::AppError;
+use anyhow::Result;
 use axum::{extract::Path, http::StatusCode, Json};
 use serde::Serialize;
 
@@ -7,7 +9,7 @@ pub struct Todo {
     pub username: String,
 }
 
-pub async fn get_todos() -> (StatusCode, Json<Vec<Todo>>) {
+pub async fn get_todos() -> Result<Json<Vec<Todo>>, AppError> {
     let todos = vec![
         Todo {
             id: 1337,
@@ -18,10 +20,10 @@ pub async fn get_todos() -> (StatusCode, Json<Vec<Todo>>) {
             username: "lalaladjkfjkd".to_string(),
         },
     ];
-    (StatusCode::OK, Json(todos))
+    Ok(Json(todos))
 }
 
-pub async fn get_todo(Path(id): Path<u64>) -> (StatusCode, Json<Todo>) {
+pub async fn get_todo(Path(id): Path<u64>) -> Result<Json<Todo>, AppError> {
     let todos = vec![
         Todo {
             id: 1337,
@@ -33,14 +35,12 @@ pub async fn get_todo(Path(id): Path<u64>) -> (StatusCode, Json<Todo>) {
         },
     ];
 
-    match todos.into_iter().find(|todo| todo.id == id) {
-        Some(todo) => (StatusCode::OK, Json(todo)),
-        None => (
-            StatusCode::NOT_FOUND,
-            Json(Todo {
-                id: 0,
-                username: "".to_string(),
-            }),
-        ),
-    }
+    todos
+        .into_iter()
+        .find(|todo| todo.id == id)
+        .map(Json)
+        .ok_or_else(|| AppError {
+            status: StatusCode::NOT_FOUND,
+            message: format!("todo with id {} not found", id),
+        })
 }
