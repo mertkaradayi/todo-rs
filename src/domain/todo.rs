@@ -17,3 +17,10 @@ pub struct Todo {
 pub struct PostTodo {
     pub description: String,
 }
+
+#[derive(Serialize, Deserialize, AsChangeset)]
+#[diesel(table_name = crate::schema::todos)]
+pub struct PutTodo {
+    pub description: Option<String>,
+    pub status: Option<String>,
+}

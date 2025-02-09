@@ -1,8 +1,8 @@
 use axum::{
-    routing::{get, post},
+    routing::{get, post, put},
     Router,
 };
-use todo_rs::routes::{create_todo, get_todo, get_todos, health_check};
+use todo_rs::routes::{create_todo, get_todo, get_todos, health_check, update_todo};
 
 use todo_rs::establish_connection;
 
@@ -15,9 +15,14 @@ async fn main() -> anyhow::Result<()> {
         .route("/todos", post(create_todo))
         .route("/todos", get(get_todos))
         .route("/todos/{id}", get(get_todo))
+        .route("/todos/{id}", put(update_todo))
         .with_state(db_pool);
 
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:8008").await.unwrap();
-    axum::serve(listener, app).await.unwrap();
+    let listener = tokio::net::TcpListener::bind("0.0.0.0:8008")
+        .await
+        .unwrap();
+    axum::serve(listener, app)
+        .await
+        .unwrap();
     Ok(())
 }

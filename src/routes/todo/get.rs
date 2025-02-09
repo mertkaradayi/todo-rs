@@ -3,16 +3,18 @@ use crate::DbPool;
 use anyhow::Result;
 use axum::{extract::Path, extract::State, http::StatusCode, Json};
 
-use crate::domain::{PostTodo, Todo};
+use crate::domain::Todo;
 use diesel::prelude::*;
 
 pub async fn get_todos(State(db_pool): State<DbPool>) -> Result<Json<Vec<Todo>>, AppError> {
     use crate::schema::todos::dsl::*;
 
-    let mut conn = db_pool.get().map_err(|_| AppError {
-        status: StatusCode::INTERNAL_SERVER_ERROR,
-        message: "Failed to get connection from pool".to_string(),
-    })?;
+    let mut conn = db_pool
+        .get()
+        .map_err(|_| AppError {
+            status: StatusCode::INTERNAL_SERVER_ERROR,
+            message: "Failed to get connection from pool".to_string(),
+        })?;
 
     let result_todos: Vec<_> = todos
         .limit(10)
@@ -29,10 +31,12 @@ pub async fn get_todo(
 ) -> Result<Json<Todo>, AppError> {
     use crate::schema::todos::dsl;
 
-    let mut conn = db_pool.get().map_err(|_| AppError {
-        status: StatusCode::INTERNAL_SERVER_ERROR,
-        message: "Failed to get connection from pool".to_string(),
-    })?;
+    let mut conn = db_pool
+        .get()
+        .map_err(|_| AppError {
+            status: StatusCode::INTERNAL_SERVER_ERROR,
+            message: "Failed to get connection from pool".to_string(),
+        })?;
     dsl::todos
         .filter(dsl::id.eq(id))
         .select(Todo::as_select())
@@ -43,23 +47,4 @@ pub async fn get_todo(
             status: StatusCode::NOT_FOUND,
             message: format!("todo with id {:?} not found", id),
         })
-}
-
-#[axum::debug_handler]
-pub async fn create_todo(
-    State(db_pool): State<DbPool>,
-    Json(new_todo): Json<PostTodo>,
-) -> Result<Json<Todo>, AppError> {
-    use crate::schema::todos::dsl::*;
-
-    let mut conn = db_pool.get().map_err(|_| AppError {
-        status: StatusCode::INTERNAL_SERVER_ERROR,
-        message: "Failed to get connection from pool".to_string(),
-    })?;
-
-    let inserted_todo = diesel::insert_into(todos)
-        .values(description.eq(new_todo.description))
-        .get_result(&mut conn)?;
-
-    Ok(Json(inserted_todo))
 }
