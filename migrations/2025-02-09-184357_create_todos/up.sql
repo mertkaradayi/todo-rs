@@ -2,7 +2,7 @@
 CREATE TABLE todos (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     description TEXT NOT NULL,
-    status TEXT NOT NULL CHECK (status IN ('Pending', 'Completed')),
+    status TEXT NOT NULL DEFAULT 'PENDING',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

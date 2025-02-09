@@ -1,5 +1,8 @@
-use axum::{routing::get, Router};
-use todo_rs::routes::{get_todo, get_todos, health_check};
+use axum::{
+    routing::{get, post},
+    Router,
+};
+use todo_rs::routes::{create_todo, get_todo, get_todos, health_check};
 
 use todo_rs::establish_connection;
 
@@ -9,6 +12,7 @@ async fn main() -> anyhow::Result<()> {
 
     let app = Router::new()
         .route("/health", get(health_check))
+        .route("/todos", post(create_todo))
         .route("/todos", get(get_todos))
         .route("/todos/{id}", get(get_todo))
         .with_state(db_pool);

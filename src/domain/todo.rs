@@ -12,3 +12,8 @@ pub struct Todo {
     pub created_at: Option<chrono::NaiveDateTime>,
     pub updated_at: Option<chrono::NaiveDateTime>,
 }
+
+#[derive(Serialize, Deserialize)]
+pub struct PostTodo {
+    pub description: String,
+}
